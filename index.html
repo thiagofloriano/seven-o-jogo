@@ -88,6 +88,7 @@
   /* The partitura (Fase 7) is the one picture drawn in code, an SVG: wide, so it gets more height. */
   #card .art[src^="data:image/svg"] { height: auto; width: 100%; max-height: 62vh; object-fit: contain; }
   #card .sheet:has(.art[src^="data:image/svg"]:not([hidden])), #ask .sheet:has(.art[src^="data:image/svg"]:not([hidden])) { width: min(1100px, 96vw); max-width: none; box-sizing: border-box; }
+  #card .text { white-space: pre-line; font-variant-numeric: tabular-nums; }
   #card .tap { font-size: 12px; opacity: 0.6; margin-top: 10px; }
   /* The scripted hold: the bar fills while any key or the panel is held. */
   #hold .sheet { text-align: center; font-size: 17px; touch-action: none; }
@@ -346,7 +347,7 @@
   #debug[hidden] { display: none; }
   #sig { position: fixed; right: calc(8px + env(safe-area-inset-right)); bottom: calc(1px + env(safe-area-inset-bottom)); color: rgba(255,255,255,0.55); font: 10px system-ui, sans-serif; text-shadow: 0 1px 2px #000; pointer-events: none; z-index: 1; }
 </style>
-<script>fetch('version.txt',{cache:'no-store'}).then((r)=>r.ok?r.text():'').then((v)=>{v=v.trim();if(/^[0-9a-f]{10}$/.test(v)&&v!=='1824a02944'&&new URLSearchParams(location.search).get('v')!==v)location.replace(location.pathname+'?v='+v+location.hash);}).catch(()=>{});</script>
+<script>fetch('version.txt',{cache:'no-store'}).then((r)=>r.ok?r.text():'').then((v)=>{v=v.trim();if(/^[0-9a-f]{10}$/.test(v)&&v!=='418bd443c8'&&new URLSearchParams(location.search).get('v')!==v)location.replace(location.pathname+'?v='+v+location.hash);}).catch(()=>{});</script>
 </head>
 <body>
 <div id="game"></div>
