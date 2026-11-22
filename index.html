@@ -85,6 +85,9 @@
   #card .sheet { text-align: center; font-size: 17px; }
   #card .art { display: block; height: 72px; margin: 0 auto 8px; }
   #card .art[hidden] { display: none; }
+  /* The partitura (Fase 7) is the one picture drawn in code, an SVG: wide, so it gets more height. */
+  #card .art[src^="data:image/svg"] { height: auto; width: 100%; max-height: 62vh; object-fit: contain; }
+  #card .sheet:has(.art[src^="data:image/svg"]:not([hidden])), #ask .sheet:has(.art[src^="data:image/svg"]:not([hidden])) { width: min(1100px, 96vw); max-width: none; box-sizing: border-box; }
   #card .tap { font-size: 12px; opacity: 0.6; margin-top: 10px; }
   /* The scripted hold: the bar fills while any key or the panel is held. */
   #hold .sheet { text-align: center; font-size: 17px; touch-action: none; }
@@ -106,6 +109,58 @@
   }
   #hold .track { position: relative; height: clamp(34px, 7vh, 56px); border-bottom: 3px solid var(--ink); }
   #hold .track[hidden] { display: none; }
+  /* Lanes (Fase 7): the score inside a camera frame, REC while recording, and one button per player of the band. */
+  #hold .lanes { display: flex; gap: 6px; justify-content: center; margin-top: 6px; }
+  #hold .lanes[hidden], #hold .phone[hidden] { display: none; }
+  #hold .lanes button { margin: 0; padding: 6px 12px; font: inherit; font-weight: 700; }
+  #hold .lanes button.on { background: var(--accent); }
+  /* Fase 7 on camera: an upright phone filming the band on the left, taking the panel's whole height; the text, the tablature (a basic Guitar Hero) and its arrow pads on the right. */
+  #hold.rhythm.cam { align-items: center !important; padding-top: 0 !important; background: rgba(20, 18, 16, 0.45); }
+  #hold.cam .sheet { display: grid; grid-template-columns: auto minmax(160px, 260px); grid-template-rows: auto auto 1fr auto; align-items: stretch; grid-template-areas: "phone text" "phone label" "phone tab" "phone pads"; gap: 4px 18px; width: auto; }
+  #hold.cam .text { grid-area: text; } #hold.cam .label { grid-area: label; min-height: 1.2em; }
+  /* The phone: ~9:19, thin dark bezel, big round corners, a front camera punch-hole on top; it sways in the hand when turned. */
+  #hold.cam .phone { grid-area: phone; position: relative; height: min(600px, 86vh); aspect-ratio: 9 / 19; box-sizing: border-box; padding: 6px; background: #111; border-radius: 30px; box-shadow: 0 0 0 2px #3a3a3a, 0 8px 22px #0007; }
+  #hold.cam .phone::before { content: ''; position: absolute; z-index: 2; left: 50%; top: 13px; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: #000; box-shadow: 0 0 0 2px #222; }
+  #hold.cam .phone.turn { animation: sway 0.2s ease-out; }
+  @keyframes sway { 40% { transform: rotate(var(--sway, 3deg)) translateY(-2px); } }
+  /* The screen: the strip of the room (wall, skirting, floor) with the three players, the camera app over it. */
+  #hold.cam .screen { position: relative; overflow: hidden; height: 100%; border-radius: 24px; background: linear-gradient(#efe3c6 0 34%, #6b4a2c 34% 36%, #a9784b 36%); }
+  /* A low point of view: the band fills the upright screen in depth. The middle player stands back and higher, the two ends in front, each 4% clear of the edge so a zoom or a swinging instrument never leaves the screen; the ends stand just above the VÍDEO bar (92px). */
+  /* The wall props sit on the wall band (under REC, down to the floor line at 36%), behind the band and a little faded. */
+  #hold.cam .wall { position: absolute; left: 0; width: 100%; top: 12%; height: 24%; opacity: 0.8; }
+  #hold.cam .stage { position: relative; height: 100%; transition: transform 0.18s ease-out; }
+  #hold.cam figure { position: absolute; width: 50%; margin: 0; display: flex; flex-direction: column; align-items: center; transition: transform 0.18s ease-out; transform-origin: 50% 100%; }
+  #hold.cam figure:nth-child(1) { left: 4%; bottom: 92px; z-index: 2; transform-origin: 0 100%; }
+  #hold.cam figure:nth-child(2) { left: 28%; bottom: calc(92px + 19%); width: 44%; z-index: 1; }
+  #hold.cam figure:nth-child(3) { right: 4%; bottom: 92px; z-index: 2; transform-origin: 100% 100%; }
+  #hold.cam figure.framed { transform: scale(1.1); z-index: 3; }
+  #hold.cam figure:nth-child(2) figcaption { order: -1; margin: 0 0 2px; }
+  #hold.cam figure svg { display: block; width: 100%; height: auto; transform-origin: 50% 70%; }
+  #hold.cam figcaption { font: 700 11px system-ui, sans-serif; color: #1b1b1b; background: #fffc; border-radius: 6px; padding: 0 5px; margin-top: 2px; white-space: nowrap; }
+  #hold.cam figure.cue figcaption { background: #ff4b3a; color: #fff; }
+  #hold.cam figure.hit svg { animation: play 0.3s; }
+  @keyframes play { 25% { transform: rotate(-6deg) scale(1.06); } 60% { transform: rotate(5deg); } }
+  #hold.cam .cambar { position: absolute; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; font: 700 12px system-ui, sans-serif; color: #fff; text-shadow: 0 1px 2px #000a; }
+  #hold.cam .cambar.top { top: 26px; flex-direction: row; justify-content: center; }
+  #hold.cam .cambar.top b { display: none; color: #fff; background: #e0322a; border-radius: 4px; padding: 0 5px; animation: rec 1s steps(2) infinite; }
+  #hold.rec .cambar.top b { display: inline; }
+  @keyframes rec { 50% { opacity: 0.45; } }
+  #hold.cam .cambar.bottom { bottom: 0; padding: 6px 0 12px; background: #0008; letter-spacing: 1px; color: #ffd34d; }
+  #hold.cam .shutter { width: 44px; height: 44px; box-sizing: border-box; border-radius: 50%; border: 4px solid #fff; background: #fff; box-shadow: inset 0 0 0 3px #0008; }
+  #hold.rec .shutter { background: #e0322a; }
+  #hold .track.tab { grid-area: tab; align-self: stretch; height: auto; min-height: 120px; border: 0; border-radius: 8px; overflow: hidden; background: repeating-linear-gradient(90deg, #2a2622 0 calc(100% / var(--cols) - 2px), #6b6257 0 calc(100% / var(--cols))); }
+  #hold .track.tab b { bottom: auto; height: 32px; margin-top: -16px; border: 0; padding: 0 8px; background: #f6efdc content-box; border-radius: 10px; color: #1b1b1b; font: 900 24px/32px system-ui, sans-serif; text-align: center; transform: none; transition: none; }
+  #hold .track.tab b > * { display: none; }
+  #hold .track.tab b.ok { background: #3fae4f content-box; color: #fff; } #hold .track.tab b.bad { background: #d3402f content-box; color: #fff; }
+  #hold .track.tab i { left: 0 !important; right: 0; top: 85%; bottom: auto; width: auto; height: 4px; margin: -2px 0 0; background: var(--accent); }
+  #hold.cam .lanes { grid-area: pads; margin: 0; display: grid; grid-template-columns: repeat(var(--cols, 3), 1fr); gap: 4px; }
+  #hold.cam .lanes button { padding: 6px 0; font-size: 24px; line-height: 1; }
+  @media (max-height: 500px) {
+    #hold.cam .sheet { width: auto; gap: 2px 10px; padding: 4px 10px; }
+    #hold.cam .text { margin: 0; font-size: 13px; }
+    #hold.cam .label { margin: 0; font-size: 14px; }
+    #hold.cam figure:nth-child(2) { bottom: calc(92px + 14%); }
+  }
   #hold .track b { position: absolute; bottom: 4px; height: 70%; box-sizing: border-box; border: 3px solid var(--ink); border-radius: 6px; background: #f6efdc; transition: background 0.08s; }
   #hold .track b.on { background: var(--accent); transform: translateY(-3px); }
   #hold .track b.ok { background: #3fae4f; }
@@ -184,6 +239,7 @@
   #book .todo.crossed { text-decoration: line-through; opacity: 0.5; }
   #book .blank { opacity: 0.55; font-style: italic; margin-top: 2em; text-align: center; }
   mark.hl { background: #ffd84a; color: #6a1f00; font-weight: 800; font-family: Georgia, serif; padding: 0 1px; border-radius: 2px; }
+  mark.hl.red { background: none; color: #c0201a; }
   #book .term, .balloon .term, .memory .term { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; font-weight: 600; }
   /* Portraits: the character drawn faded and gray inside a pencil frame before the memory comes back, in a warm painted frame after. */
   #book .portrait { width: clamp(80px, 22vw, 180px); aspect-ratio: 3 / 4; margin: 4px 0 8px; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
@@ -253,6 +309,8 @@
   /* The typed answer: a text field over the game; tapping it opens the phone keyboard. Text in it can be selected, unlike the rest of the page. */
   #ask .sheet { text-align: center; position: relative; }
   #ask .close { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; margin: 0; padding: 0; font-size: 18px; border-radius: 50%; border: 1px solid var(--ink); background: transparent; color: var(--ink); }
+  #ask .prova { font-size: 13px; margin: 0 36px 6px; font-weight: 600; letter-spacing: .02em; }
+  #ask .prova[hidden] { display: none; }
   #ask .hint { font-size: 13px; opacity: .7; margin: 4px 0 0; }
   #ask form { display: flex; gap: 6px; justify-content: center; margin-top: 8px; }
   #ask input { font: inherit; font-size: 18px; width: min(220px, 50vw); padding: 8px 10px; border-radius: 8px; border: 2px solid var(--ink); background: #fff; color: #1b1b1b; user-select: text; -webkit-user-select: text; touch-action: auto; }
@@ -265,6 +323,10 @@
   #morse .notes { grid-column: 1 / -1; display: flex; gap: 4px; margin-top: 6px; }
   #morse .notes input { flex: 1; min-width: 0; font: inherit; font-size: 16px; padding: 4px 6px; border-radius: 6px; border: 1px solid var(--ink); background: #fff; color: #1b1b1b; user-select: text; -webkit-user-select: text; touch-action: auto; }
   #morse .notes button { font: inherit; min-width: 32px; padding: 4px; border-radius: 6px; border: 1px solid var(--ink); background: transparent; color: var(--ink); }
+  #ask .art { display: block; width: 100%; height: auto; max-height: 58vh; object-fit: contain; margin: 0 auto 6px; }
+  #ask .art[hidden] { display: none; }
+  /* A phone on its side: the two staves of the partitura give way so the answer field still fits on screen. */
+  @media (max-height: 500px) { #ask .art[src^="data:image/svg"] { max-height: 48vh; } }
   #ask .cheat { display: inline-block; margin: 0 0 10px; padding: 6px 12px; border: 1px dashed var(--ink); border-radius: 8px; font: 13px/1.4 ui-monospace, monospace; text-align: left; max-width: 100%; box-sizing: border-box; white-space: pre-wrap; }
   #ask .keys { display: none; }
   @media (pointer: coarse) {
@@ -273,6 +335,7 @@
     #ask .sheet { max-width: min(560px, 94vw); padding: 10px 14px; }
   }
   #ask .cheat[hidden] { display: none; }
+  #ask .label:not(.cells) { white-space: pre-line; }
   #ask .label.cells { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 8px; font: 13px ui-monospace, monospace; }
   #ask .label.cells span { display: flex; flex-direction: column; align-items: center; gap: 2px; justify-content: center; }
   #ask .label.cells input { width: 2.4em; font-size: 16px; text-align: center; padding: 2px; border-radius: 6px; border: 1px solid var(--ink); background: #fff; color: #1b1b1b; user-select: text; -webkit-user-select: text; touch-action: auto; }
@@ -283,7 +346,7 @@
   #debug[hidden] { display: none; }
   #sig { position: fixed; right: calc(8px + env(safe-area-inset-right)); bottom: calc(1px + env(safe-area-inset-bottom)); color: rgba(255,255,255,0.55); font: 10px system-ui, sans-serif; text-shadow: 0 1px 2px #000; pointer-events: none; z-index: 1; }
 </style>
-<script>fetch('version.txt',{cache:'no-store'}).then((r)=>r.ok?r.text():'').then((v)=>{v=v.trim();if(/^[0-9a-f]{10}$/.test(v)&&v!=='0e40ff481e'&&new URLSearchParams(location.search).get('v')!==v)location.replace(location.pathname+'?v='+v+location.hash);}).catch(()=>{});</script>
+<script>fetch('version.txt',{cache:'no-store'}).then((r)=>r.ok?r.text():'').then((v)=>{v=v.trim();if(/^[0-9a-f]{10}$/.test(v)&&v!=='2395612f1c'&&new URLSearchParams(location.search).get('v')!==v)location.replace(location.pathname+'?v='+v+location.hash);}).catch(()=>{});</script>
 </head>
 <body>
 <div id="game"></div>
@@ -312,7 +375,7 @@
 <div id="book" class="panel" hidden><div class="paper"><div class="tabs"></div><button class="close" aria-label="Fechar">✕</button><div class="cols"><ul class="list"></ul><div class="page"></div></div></div></div>
 <div id="puzzle" class="panel" hidden><div class="paper"><button class="close" aria-label="Fechar">✕</button><h2></h2><p class="prompt"></p><p class="picture"></p><div class="body"></div><p class="msg"></p></div></div>
 <div id="pause" class="panel" hidden><div class="sheet"><h2></h2><button class="resume"></button><button class="restart"></button><button class="quit"></button></div></div>
-<div id="ask" class="panel" hidden><div class="sheet"><button class="close" type="button" aria-label="Fechar">✕</button><pre class="cheat" hidden></pre><p class="label"></p><p class="hint"></p><form><input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" inputmode="none"><button type="submit">OK</button></form><p class="msg"></p></div></div>
+<div id="ask" class="panel" hidden><div class="sheet"><button class="close" type="button" aria-label="Fechar">✕</button><p class="prova" hidden></p><pre class="cheat" hidden></pre><p class="label"></p><p class="hint"></p><form><input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" inputmode="none"><button type="submit">OK</button></form><p class="msg"></p></div></div>
 <button id="b-morse" hidden>Morse</button>
 <div id="morse" hidden></div>
 <div id="rotate"></div>
@@ -325,6 +388,6 @@
   addEventListener('unhandledrejection', (e) => show(`promise: ${e.reason?.stack ?? e.reason}`)); })();
 </script>
 <script src="phaser.min.js?v=66348b1b51"></script>
-<script src="game.js?v=302fc5f790"></script>
+<script src="game.js?v=fa247baf13"></script>
 </body>
 </html>
